@@ -27,8 +27,12 @@ int main(int argc,char **argv)
 
     // calculate sound speed for all time and spatial levels
     //soundspeed(E); 
-    printf("check val = %f m/s\n", soundspeed(40.0, 40.0, 10000.0) );
-    //printf("check depth to pressure: (d = 1 km at 0 degrees latitude) = %f MPa\n", pressure(11.0, -11.0) );
+    printf("check val sound speed is = %f m/s\n", soundspeed(40.0, 40.0, 10000.0) );
+    printf("check depth to pressure: (d = 1 km at 0 degrees latitude) = %f MPa\n", pressure(11.0, -11.0) );
+    printf("convert potential temp to insitu: %f C (should be 20.0)\n", convert_temperature(19.0, 35.0, 0.0,5000.0) );
+     printf("convert insitu to potential: %f C (should be 19.0)\n", convert_temperature(20.0, 35.0, 5000.0,0.0) );
+
+
     // write the sound speed output file
     //write_netcdf(E);
     

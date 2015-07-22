@@ -134,4 +134,5 @@ void write_data( e* );
 
 double soundspeed(double, double, double);
 double pressure(double, double);
+double convert_temperature(double, double, double, double);
 
