@@ -62,11 +62,13 @@ double pressure(double z, double lat){
     // return pressure from depth assuming the ocean is an ideal medium with 
     // temperature 0 and salinity of 35 parts per thousand
 
+    // double z is the depth in metres
+    // double lat is the latitude in degrees
     
     double  depth, latitude;
     double  g, k, h45, h;
 
-    depth = z * 1000.0; // convert km to metres
+    depth = z ; 
     latitude = lat*M_PI/180.0; // convert degrees to radians
 
     g = 9.7803*(1.0 + 5.3e-3 * pow(sin(latitude),2.0));

@@ -40,7 +40,7 @@ void write_netcdf(e *E){
     
 	create_netcdf(E, E->output_file_name, &E->ncid);
     
-    defdims_netcdf(E);
+        defdims_netcdf(E);
 	
 	// setup variables
 	defvars(E);
@@ -73,60 +73,42 @@ void create_netcdf(e *E, char *fname, int *ncid){
 
 void defdims_netcdf(e *E){
 	
-/*	
+	
 	// define the dimensions
-	if ((E->retval = nc_def_dim(E->ncid, "xi_rho", E->g.nX, &E->xi_rho_dimid)))
+	if ((E->retval = nc_def_dim(E->ncid, "xt_ocean", E->xt_ocean, &E->xt_ocean_dimid)))
 		fail("nc_def_dim failed!\n");
 	
-	if ((E->retval = nc_def_dim(E->ncid, "xi_u", E->g.nX-1, &E->xi_u_dimid)))
+	if ((E->retval = nc_def_dim(E->ncid, "yt_ocean", E->yt_ocean, &E->yt_ocean_dimid)))
 		fail("nc_def_dim failed!\n");
     
-    if ((E->retval = nc_def_dim(E->ncid, "xi_v", E->g.nX, &E->xi_v_dimid)))
+    if ((E->retval = nc_def_dim(E->ncid, "st_ocean", E->st_ocean, &E->st_ocean_dimid)))
 		fail("nc_def_dim failed!\n");
 	
-    if ((E->retval = nc_def_dim(E->ncid, "xi_psi", E->g.nX-1, &E->xi_psi_dimid)))
+    if ((E->retval = nc_def_dim(E->ncid, "Time", E->time, &E->time_dimid)))
 		fail("nc_def_dim failed!\n");
 	
-    if ((E->retval = nc_def_dim(E->ncid, "eta_rho", E->g.nY, &E->eta_rho_dimid)))
-		fail("nc_def_dim failed!\n");
 	// end define mode for this file
 	if ((E->retval = nc_enddef(E->ncid)))
       	fail("nc_enddef failed\n");
     
-*/	
+	
 }
 
 
 void defvars(e *E){
-/*	
+	
     // setup dimids
     
-    E->dimIdsOne[0] = E->one_dimid;
-    
-    E->dimIdsRho[0] = E->eta_rho_dimid;
-    E->dimIdsRho[1] = E->xi_rho_dimid;
-    
-    E->dimIdsPsi[0] = E->eta_psi_dimid;
-    E->dimIdsPsi[1] = E->xi_psi_dimid;
-    
-    E->dimIdsU[0] = E->eta_u_dimid;
-    E->dimIdsU[1] = E->xi_u_dimid;
-    
-    E->dimIdsV[0] = E->eta_v_dimid;
-    E->dimIdsV[1] = E->xi_v_dimid;
-    
+    E->dimIds[0] = E->time_dimid;
+    E->dimIds[1] = E->st_ocean_dimid;
+    E->dimIds[2] = E->yt_ocean_dimid;
+    E->dimIds[3] = E->xt_ocean_dimid;
     
 	//float	fillValue = -1e34;
-    defvar_netcdf(E, E->ncid, "angle", NC_DOUBLE, 2, &E->dimIdsRho[0], &E->vid_angle);	
-    add_txt_attribute_netcdf(E, E->ncid, E->vid_dmde, "long_name", "angle between xi axis and east");
-	add_txt_attribute_netcdf(E, E->ncid, E->vid_dmde, "units", "radian");
+    defvar_netcdf(E, E->ncid, "soundspeed", NC_DOUBLE, 4, &E->dimIds[0], &E->vid_sound_speed);	
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "long_name", "sound speed");
+	add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "units", "m/s");
 	
-	defvar_netcdf(E, E->ncid, "dmde", NC_DOUBLE, 2, &E->dimIdsRho[0], &E->vid_dmde);	
-    add_txt_attribute_netcdf(E, E->ncid, E->vid_dmde, "long_name", "eta derivative of inverse metric factor pm");
-	add_txt_attribute_netcdf(E, E->ncid, E->vid_dmde, "units", "m");
-    
-*/
-    
 }
 
 
@@ -167,17 +149,10 @@ void add_global_metadata(e *E, int ncid){
 
 void write_data(e *E){
     
-   /* 
-    // write angle
-    if ((E->retval = nc_put_var_double(E->ncid, E->vid_angle, &E->angle[0][0])))
-        fail("put_var_ failed for angle. Error code = %d\n",E->retval);
     
-    // write dmde
-    if ((E->retval = nc_put_var_double(E->ncid, E->vid_dmde, &E->dmde[0][0])))
-            fail("put_var_ failed for dmdw. Error code = %d\n",E->retval);   
-    // write dndx
-    if ((E->retval = nc_put_var_double(E->ncid, E->vid_dndx, &E->dndx[0][0])))
-        fail("put_var_ failed for dndx. Error code = %d\n",E->retval);
-    */
+    // write angle
+    if ((E->retval = nc_put_var_double(E->ncid, E->vid_sound_speed, &E->c[0][0][0][0])))
+        fail("put_var_ failed for sound_speed. Error code = %d\n",E->retval);
+    
 
 }

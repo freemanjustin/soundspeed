@@ -61,12 +61,16 @@ typedef struct{
     double  ****T;  // temperature
     double  ****S;  // salinity
     double  ****c;  // sound speed
+
+    double *lat;
+    double *lon;
+    double *depth;
     
     // netcdf params
     int ncid;
     int varid;
     int retval;
-    int dimIdsSoundSpeed[NC_MAX_VAR_DIMS];
+    int dimIds[NC_MAX_VAR_DIMS];
     
     // dimensions
     size_t xt_ocean;
@@ -74,38 +78,18 @@ typedef struct{
     size_t st_ocean;
     size_t time;
    
-
+    // dimids for output
+    int xt_ocean_dimid;
+    int yt_ocean_dimid;
+    int st_ocean_dimid;
+    int time_dimid;
  
     // variable ids
-    int vid_angle;
-    int vid_dmde;
-    int vid_dndx;
-    int vid_el;
-    int vid_f;
-    int vid_h;
-    int vid_lat_rho;
-    int vid_lat_psi;
-    int vid_lat_u;
-    int vid_lat_v;
-    
-    int vid_lon_rho;
-    int vid_lon_psi;
-    int vid_lon_u;
-    int vid_lon_v;
-    
-    int vid_mask_rho;
-    int vid_mask_psi;
-    int vid_mask_u;
-    int vid_mask_v;
-    
-    int vid_pm;
-    int vid_pn;
-    int vid_spherical;
-    int vid_xl;
-    int vid_X;
-    int vid_Y;
-    int vid_dx;
-    int vid_dy;
+    int vid_sound_speed;
+    int vid_xt_ocean;
+    int vid_yt_ocean;
+    int vid_st_ocean;
+    int vid_time;
     
 }e;
 
@@ -135,4 +119,6 @@ void write_data( e* );
 double soundspeed(double, double, double);
 double pressure(double, double);
 double convert_temperature(double, double, double, double);
+
+void get_grid_params(e*);
 
