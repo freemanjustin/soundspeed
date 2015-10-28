@@ -41,13 +41,13 @@ int main(int argc,char **argv)
 			// convert depth to pressure
 			// we need the depth in km and the latitude of the location
 			// the pressure is returned in MPa
-			P0 = pressure(E->depth[k], E->lat[j]);
+			P0 = pressure(E->depth[k], E->lat[i]);
 			// convert potential temperature to in-situ temperature
 			// this function wants the reference pressure (P0) in decibars
 			// 1 Mpa = 100 deci bar
 		        Tpot = convert_temperature(E->T[t][k][i][j], E->S[t][k][i][j], 0.0, P0*100.0);	
 			// calculate soud speed
-			E->c[t][k][i][j] = soundspeed(Tpot, E->S[t][k][i][j], P0);
+			E->c[t][k][i][j] = soundspeed(Tpot, E->S[t][k][i][j], P0*100.0);
 
 		}
 	    }

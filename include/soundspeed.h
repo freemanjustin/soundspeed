@@ -65,6 +65,7 @@ typedef struct{
     double *lat;
     double *lon;
     double *depth;
+    double *times;
     
     // netcdf params
     int ncid;

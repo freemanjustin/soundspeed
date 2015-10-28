@@ -105,6 +105,13 @@ void defvars(e *E){
     E->dimIds[3] = E->xt_ocean_dimid;
     
 	//float	fillValue = -1e34;
+
+    defvar_netcdf(E, E->ncid, "xt_ocean", NC_DOUBLE, 1, &E->dimIds[3], &E->vid_xt_ocean);
+
+    defvar_netcdf(E, E->ncid, "yt_ocean", NC_DOUBLE, 1, &E->dimIds[2], &E->vid_yt_ocean);
+    defvar_netcdf(E, E->ncid, "st_ocean", NC_DOUBLE, 1, &E->dimIds[1], &E->vid_st_ocean); 
+    defvar_netcdf(E, E->ncid, "Time", NC_DOUBLE, 1, &E->dimIds[0], &E->vid_time);
+
     defvar_netcdf(E, E->ncid, "soundspeed", NC_DOUBLE, 4, &E->dimIds[0], &E->vid_sound_speed);	
     add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "long_name", "sound speed");
 	add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "units", "m/s");
@@ -149,7 +156,19 @@ void add_global_metadata(e *E, int ncid){
 
 void write_data(e *E){
     
-    
+    if ((E->retval = nc_put_var_double(E->ncid, E->vid_xt_ocean, &E->lon[0])))
+        fail("put_var_ failed for sound_speed. Error code = %d\n",E->retval);
+
+    if ((E->retval = nc_put_var_double(E->ncid, E->vid_yt_ocean, &E->lat[0])))
+        fail("put_var_ failed for sound_speed. Error code = %d\n",E->retval);
+  
+    if ((E->retval = nc_put_var_double(E->ncid, E->vid_st_ocean, &E->depth[0])))
+        fail("put_var_ failed for sound_speed. Error code = %d\n",E->retval);
+
+    if ((E->retval = nc_put_var_double(E->ncid, E->vid_time, &E->times[0])))
+        fail("put_var_ failed for sound_speed. Error code = %d\n",E->retval);
+ 
+ 
     // write angle
     if ((E->retval = nc_put_var_double(E->ncid, E->vid_sound_speed, &E->c[0][0][0][0])))
         fail("put_var_ failed for sound_speed. Error code = %d\n",E->retval);

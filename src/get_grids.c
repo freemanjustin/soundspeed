@@ -20,10 +20,12 @@ void get_grid_params(e *E){
     E->lon = malloc(E->xt_ocean*sizeof(double));
     E->lat = malloc(E->yt_ocean*sizeof(double));
     E->depth = malloc(E->st_ocean*sizeof(double));
+    E->times = malloc(E->time*sizeof(double));
 
     get_field(E, "xt_ocean", &E->lon[0]);
     get_field(E, "yt_ocean", &E->lat[0]);
-    get_field(E, "st_ocean", &E->depth[0]);   
+    get_field(E, "st_ocean", &E->depth[0]);
+    get_field(E, "Time", &E->times[0]);   
 
  
     // read in the _FillValue
