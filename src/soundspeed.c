@@ -35,7 +35,7 @@ double soundspeed(double T, double S, double P0){
     // S**3/2 TERM
     B1 =  7.3637e-5 + 1.7945e-7 * T;
     B0 = -1.922e-2  - 4.42e-5   * T;
-    B  = B0 + B1 * P;
+    B  = B0 + (B1 * P);
 
     // S**1 TERM
     A3 = (-3.389e-13    * T + 6.649e-12)  * T + 1.100e-10;
