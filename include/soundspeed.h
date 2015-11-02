@@ -66,6 +66,10 @@ typedef struct{
     double *lon;
     double *depth;
     double *times;
+
+    float fillValue;
+    float fillValue_temp;
+    float fillValue_salt;
     
     // netcdf params
     int ncid;
@@ -113,6 +117,7 @@ void defdims_netcdf( e* );
 void defvars( e* );
 void defvar_netcdf(e *E, int, char*, nc_type, int, int*, int*);
 void add_txt_attribute_netcdf(e *E, int, int, char*, char* );
+void add_double_attribute_netcdf(e *E, int, int, char*, int, double*);
 
 void add_global_metadata( e*, int );
 void write_data( e* );

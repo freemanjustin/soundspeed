@@ -35,7 +35,7 @@ void get_dimension(e *E, char *dim_name, size_t *dim){
 void write_netcdf(e *E){
 
 	//float	fillValue = -1e34;
-	float fillValue = NC_FILL_FLOAT;
+	//float fillValue = NC_FILL_FLOAT;
 	
     
 	create_netcdf(E, E->output_file_name, &E->ncid);
@@ -96,7 +96,8 @@ void defdims_netcdf(e *E){
 
 
 void defvars(e *E){
-	
+
+    double fillValue = NC_FILL_DOUBLE;	
     // setup dimids
     
     E->dimIds[0] = E->time_dimid;
@@ -107,14 +108,47 @@ void defvars(e *E){
 	//float	fillValue = -1e34;
 
     defvar_netcdf(E, E->ncid, "xt_ocean", NC_DOUBLE, 1, &E->dimIds[3], &E->vid_xt_ocean);
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_xt_ocean, "long_name", "tcell longitude");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_xt_ocean, "units", "degrees_E");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_xt_ocean, "cartesian_axis", "X");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_xt_ocean, "standard_name", "longitude");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_xt_ocean, "axis", "X");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_xt_ocean, "reference_datum", "geographical coordinates, WGS84 projection");
 
     defvar_netcdf(E, E->ncid, "yt_ocean", NC_DOUBLE, 1, &E->dimIds[2], &E->vid_yt_ocean);
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_yt_ocean, "long_name", "tcell latitude");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_yt_ocean, "units", "degrees_N");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_yt_ocean, "cartesian_axis", "Y");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_yt_ocean, "standard_name", "latitide");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_yt_ocean, "axis", "Y");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_yt_ocean, "reference_datum", "geographical coordinates, WGS84 projection");
+
     defvar_netcdf(E, E->ncid, "st_ocean", NC_DOUBLE, 1, &E->dimIds[1], &E->vid_st_ocean); 
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_st_ocean, "long_name", "tcell zstar depth");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_st_ocean, "units", "meters");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_st_ocean, "cartesian_axis", "Z");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_st_ocean, "positive", "down");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_st_ocean, "axis", "Z");
+
+
     defvar_netcdf(E, E->ncid, "Time", NC_DOUBLE, 1, &E->dimIds[0], &E->vid_time);
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_time, "long_name", "Time");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_time, "units", "days since 1990-01-01 00:00:00");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_time, "cartesian_axis", "T");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_time, "calendar_type", "GREGORIAN");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_time, "calendar", "GREGORIAN");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_time, "standard_name", "time");
 
     defvar_netcdf(E, E->ncid, "soundspeed", NC_DOUBLE, 4, &E->dimIds[0], &E->vid_sound_speed);	
-    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "long_name", "sound speed");
-	add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "units", "m/s");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "long_name", "speed of sound");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "standard_name", "speed of sound in sea water");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "cell_methods", "time: mean");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "time_avg_info", "average_T1, average_T2, average_DT");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "coordinates", "xt_ocean yt_ocean");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "units", "m/s");
+    
+    add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "_FillValue", 1, &fillValue);
+    add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "missing_value", 1, &fillValue);
 	
 }
 
@@ -147,6 +181,17 @@ void add_txt_attribute_netcdf(e *E, int ncid, int varid, char* att_name, char* a
 		fail("nc_enddef failed\n");
 }
 
+void add_double_attribute_netcdf(e *E, int ncid, int varid, char* att_name, int num, double *att_value){
+	
+	if((E->retval = nc_redef(ncid)))
+		fail("nc_redef failed\n");
+	
+	if(( E->retval = nc_put_att_double(ncid, varid, att_name, NC_DOUBLE, num, att_value)))
+		fail("nc_put_att_txt failed\n");
+	
+	if ((E->retval = nc_enddef(ncid)))
+		fail("nc_enddef failed\n");
+}
 
 void add_global_metadata(e *E, int ncid){
     

@@ -9,7 +9,7 @@ int main(int argc,char **argv)
 
         int	t,i,j,k;   
 	double	P0, Tpot;
-
+	double  fillValue;
  
 	// malloc the work struct
 	E = malloc(sizeof(e));
@@ -33,11 +33,16 @@ int main(int argc,char **argv)
    
      // malloc room for the sound speed array
      E->c = malloc4d_double(E->time+1, E->st_ocean, E->yt_ocean, E->xt_ocean);
-    
+
+     fillValue = NC_FILL_DOUBLE;    
      for(t=0;t<E->time;t++){
 	for(k=0;k<E->st_ocean;k++){
 	    for(i=0;i<E->yt_ocean;i++){
 		for(j=0;j<E->xt_ocean;j++){
+                    if(E->T[t][k][i][j] == E->fillValue_temp){
+                        E->c[t][k][i][j] = fillValue;
+                    }
+                    else{
 			// convert depth to pressure
 			// we need the depth in km and the latitude of the location
 			// the pressure is returned in MPa
@@ -48,7 +53,7 @@ int main(int argc,char **argv)
 		        Tpot = convert_temperature(E->T[t][k][i][j], E->S[t][k][i][j], 0.0, P0*100.0);	
 			// calculate soud speed
 			E->c[t][k][i][j] = soundspeed(Tpot, E->S[t][k][i][j], P0*100.0);
-
+                   }
 		}
 	    }
    	}
