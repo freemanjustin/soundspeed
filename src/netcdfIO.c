@@ -63,7 +63,7 @@ void create_netcdf(e *E, char *fname, int *ncid){
 	
 	//int	old_fill_mode;
     
-	if ( (E->retval = nc_create(fname, NC_CLOBBER, ncid) ) )
+	if ( (E->retval = nc_create(fname, NC_NETCDF4 | NC_CLOBBER, ncid) ) )
 		fail("couldn't create netcdf out file %s\n",fname);
     
 	// set the fill mode to be NO_FILL 
@@ -156,12 +156,21 @@ void defvars(e *E){
 
 void defvar_netcdf(e *E, int ncid, char *var_name, nc_type type, int dims, int *dimIds, int *varid){
 	
+	int	shuffle, deflate, deflate_level;
+
+	shuffle = 1;
+	deflate = 1;
+	deflate_level = 1;
 	
 	if((E->retval = nc_redef(ncid)))
 		fail("nc_redef failed\n");
     
 	if ((E->retval = nc_def_var(ncid, var_name, type, dims, dimIds, varid)))
 		fail("nc_def_var failed\n");
+
+	// set compression for variables
+	if ((E->retval = nc_def_var_deflate(ncid, *varid, shuffle, deflate, deflate_level)))
+		fail("nc_def_var_deflate failed: retval = %d\n", E->retval);
 	
 	if ((E->retval = nc_enddef(ncid)))
 		fail("nc_enddef failed\n");

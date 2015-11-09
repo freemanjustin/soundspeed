@@ -39,14 +39,14 @@ void get_grid_params(e *E){
     // read in the _FillValue
     nc_inq_varid (E->ncid, "temp", &temp_id);
     nc_get_att_float(E->ncid, temp_id, "_FillValue", &E->fillValue_temp);
-    printf("fillValue = %f\n", E->fillValue);
+    //printf("fillValue = %f\n", E->fillValue);
     // read in the scale and offset
     status = nc_get_att_float(E->ncid, temp_id, "scale_factor", &scale);
     if(status != NC_NOERR) scale = 1.0;
     status = nc_get_att_float(E->ncid, temp_id, "add_offset", &offset);
     if(status != NC_NOERR) offset = 0.0;
 
-    printf("scale = %f\noffset = %f\n", scale, offset);	
+    //printf("scale = %f\noffset = %f\n", scale, offset);	
     // apply scale and offset to fillvalue
     if(status == NC_NOERR) E->fillValue_temp = E->fillValue_temp*scale + offset;
  
@@ -83,13 +83,13 @@ void get_grid_params(e *E){
     // read in the _FillValue
     nc_inq_varid (E->ncid, "salt", &salt_id);
     nc_get_att_float(E->ncid, salt_id, "_FillValue", &E->fillValue_salt);
-    printf("fillValue = %f\n", E->fillValue);
+    //printf("fillValue = %f\n", E->fillValue);
     // read in the scale and offset
     status = nc_get_att_float(E->ncid, salt_id, "scale_factor", &scale);
     if(status != NC_NOERR) scale = 1.0;
     status = nc_get_att_float(E->ncid, salt_id, "add_offset", &offset);
     if(status != NC_NOERR) offset = 0.0;
-    printf("scale = %f\noffset = %f\n", scale, offset);
+    //printf("scale = %f\noffset = %f\n", scale, offset);
     
     // apply scale and offset to fillvalue
     if(status == NC_NOERR) E->fillValue_salt = E->fillValue_salt*scale + offset;
