@@ -61,6 +61,7 @@ typedef struct{
     double  ****T;  // temperature
     double  ****S;  // salinity
     double  ****c;  // sound speed
+    double  ***c_max_depth; // depth to max sound speed
 
     double *lat;
     double *lon;
@@ -76,6 +77,7 @@ typedef struct{
     int varid;
     int retval;
     int dimIds[NC_MAX_VAR_DIMS];
+    int dimIds_max_depth[NC_MAX_VAR_DIMS];
     
     // dimensions
     size_t xt_ocean;
@@ -91,6 +93,7 @@ typedef struct{
  
     // variable ids
     int vid_sound_speed;
+    int vid_max_depth;
     int vid_xt_ocean;
     int vid_yt_ocean;
     int vid_st_ocean;

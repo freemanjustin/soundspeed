@@ -26,7 +26,7 @@ void get_dimension(e *E, char *dim_name, size_t *dim){
 
 
     if((E->retval = nc_inq_dimid(E->ncid, dim_name, &E->varid)))
-        fail("get_dimid failed: %d\n", E->retval);
+        fail("get_dimid failed for dim_name: %s (error code is %d)\n", dim_name, E->retval);
     if((E->retval = nc_inq_dimlen(E->ncid,E->varid,dim)))
         fail("inq_dimlen failed: %d\n", E->retval);
 }
@@ -104,8 +104,12 @@ void defvars(e *E){
     E->dimIds[1] = E->st_ocean_dimid;
     E->dimIds[2] = E->yt_ocean_dimid;
     E->dimIds[3] = E->xt_ocean_dimid;
+
+    E->dimIds_max_depth[0] = E->time_dimid;
+    E->dimIds_max_depth[1] = E->yt_ocean_dimid;
+    E->dimIds_max_depth[2] = E->xt_ocean_dimid;
     
-	//float	fillValue = -1e34;
+    //float	fillValue = -1e34;
 
     defvar_netcdf(E, E->ncid, "xt_ocean", NC_DOUBLE, 1, &E->dimIds[3], &E->vid_xt_ocean);
     add_txt_attribute_netcdf(E, E->ncid, E->vid_xt_ocean, "long_name", "tcell longitude");
@@ -149,6 +153,17 @@ void defvars(e *E){
     
     add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "_FillValue", 1, &fillValue);
     add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "missing_value", 1, &fillValue);
+
+    defvar_netcdf(E, E->ncid, "max_depth", NC_DOUBLE, 3, &E->dimIds_max_depth[0], &E->vid_max_depth);
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "long_name", "depth to maximum sound speed");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "standard_name", "");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "cell_methods", "time: mean");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "time_avg_info", "average_T1, average_T2, average_DT");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "coordinates", "xt_ocean yt_ocean");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "units", "meters");
+    add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "_FillValue", 1, &fillValue);
+    add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "missing_value", 1, &fillValue);
+
 	
 }
 
@@ -223,9 +238,12 @@ void write_data(e *E){
         fail("put_var_ failed for sound_speed. Error code = %d\n",E->retval);
  
  
-    // write angle
+    // write sound speed 
     if ((E->retval = nc_put_var_double(E->ncid, E->vid_sound_speed, &E->c[0][0][0][0])))
         fail("put_var_ failed for sound_speed. Error code = %d\n",E->retval);
     
+    // write max_depth
+    if ((E->retval = nc_put_var_double(E->ncid, E->vid_max_depth, &E->c_max_depth[0][0][0])))
+        fail("put_var_ failed for sound_speed. Error code = %d\n",E->retval);
 
 }

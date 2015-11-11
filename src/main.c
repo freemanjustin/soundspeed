@@ -10,6 +10,7 @@ int main(int argc,char **argv)
         int	t,i,j,k;   
 	double	P0, Tpot;
 	double  fillValue;
+	double	max_value;
  
 	// malloc the work struct
 	E = malloc(sizeof(e));
@@ -33,6 +34,7 @@ int main(int argc,char **argv)
    
      // malloc room for the sound speed array
      E->c = malloc4d_double(E->time+1, E->st_ocean, E->yt_ocean, E->xt_ocean);
+     E->c_max_depth = malloc3d_double(E->time+1, E->yt_ocean, E->xt_ocean);
 
      fillValue = NC_FILL_DOUBLE;    
      for(t=0;t<E->time;t++){
@@ -65,8 +67,24 @@ int main(int argc,char **argv)
         printf("convert potential temp to insitu: %f C (should be 20.0)\n", convert_temperature(19.0, 35.0, 0.0,5000.0) );
         printf("convert insitu to potential: %f C (should be 19.0)\n", convert_temperature(20.0, 35.0, 5000.0,0.0) );
     #endif
-    // convert depth (m) to pressure ( units??? )
-    // convert T,S to sound speed
+
+    // calculate depth to max sound speed over the top 20 levels
+    for(t=0;t<E->time;t++){
+       for(i=0;i<E->yt_ocean;i++){
+           for(j=0;j<E->xt_ocean;j++){
+               max_value = 0.0;
+               for(k=29;k>=0;k--){
+                    if(E->c[t][k][i][j] != fillValue){
+                        if(E->c[t][k][i][j] >= max_value){
+			    max_value = E->c[t][k][i][j];
+                            E->c_max_depth[t][i][j] = E->depth[k];
+			}
+                    }
+                }
+            }
+        }
+    } 
+
 
     // write the sound speed output file
     write_netcdf(E);
