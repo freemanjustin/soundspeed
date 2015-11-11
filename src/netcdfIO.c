@@ -45,11 +45,9 @@ void write_netcdf(e *E){
 	// setup variables
 	defvars(E);
     
-    	
-	/*
+    
 	// add global metadata
 	add_global_metadata(E, E->ncid);
-	*/
     
     
     // write the data to the netcdf file
@@ -97,7 +95,8 @@ void defdims_netcdf(e *E){
 
 void defvars(e *E){
 
-    double fillValue = NC_FILL_DOUBLE;	
+    double fillValue = NC_FILL_DOUBLE;
+    float  fillValue_float = NC_FILL_FLOAT;
     // setup dimids
     
     E->dimIds[0] = E->time_dimid;
@@ -154,15 +153,15 @@ void defvars(e *E){
     add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "_FillValue", 1, &fillValue);
     add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "missing_value", 1, &fillValue);
 
-    defvar_netcdf(E, E->ncid, "max_depth", NC_DOUBLE, 3, &E->dimIds_max_depth[0], &E->vid_max_depth);
-    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "long_name", "depth to maximum sound speed");
-    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "standard_name", "");
-    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "cell_methods", "time: mean");
-    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "time_avg_info", "average_T1, average_T2, average_DT");
-    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "coordinates", "xt_ocean yt_ocean");
-    add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "units", "meters");
-    add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "_FillValue", 1, &fillValue);
-    add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "missing_value", 1, &fillValue);
+    defvar_netcdf(E, E->ncid, "max_depth", NC_FLOAT, 3, &E->dimIds_max_depth[0], &E->vid_max_depth);
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_max_depth, "long_name", "depth to maximum sound speed");
+    //add_txt_attribute_netcdf(E, E->ncid, E->vid_max_depth, "standard_name", "");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_max_depth, "cell_methods", "time: mean");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_max_depth, "time_avg_info", "average_T1, average_T2, average_DT");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_max_depth, "coordinates", "xt_ocean yt_ocean");
+    add_txt_attribute_netcdf(E, E->ncid, E->vid_max_depth, "units", "meters");
+    add_float_attribute_netcdf(E, E->ncid, E->vid_max_depth, "_FillValue", 1, &fillValue_float);
+    add_float_attribute_netcdf(E, E->ncid, E->vid_max_depth, "missing_value", 1, &fillValue_float);
 
 	
 }
@@ -217,9 +216,29 @@ void add_double_attribute_netcdf(e *E, int ncid, int varid, char* att_name, int 
 		fail("nc_enddef failed\n");
 }
 
+void add_float_attribute_netcdf(e *E, int ncid, int varid, char* att_name, int num, float *att_value){
+    
+    if((E->retval = nc_redef(ncid)))
+        fail("nc_redef failed\n");
+    
+    if(( E->retval = nc_put_att_float(ncid, varid, att_name, NC_FLOAT, num, att_value)))
+        fail("nc_put_att_txt failed\n");
+    
+    if ((E->retval = nc_enddef(ncid)))
+        fail("nc_enddef failed\n");
+}
+
+
 void add_global_metadata(e *E, int ncid){
     
     // TODO!
+    char    name[80];
+    char    attrib[80];
+    
+    sprintf(name,"reference");
+    sprintf(attrib,"Sound speed seawater, Chen and Millero 1977, JASA, 62, 1129-1135");
+    if ((E->retval = nc_put_att_text( ncid, NC_GLOBAL,name, strlen(attrib), attrib ) ))
+        fail("nc_put_att_string failed for global attribute %s\n", name);
 }
 
 
@@ -243,7 +262,7 @@ void write_data(e *E){
         fail("put_var_ failed for sound_speed. Error code = %d\n",E->retval);
     
     // write max_depth
-    if ((E->retval = nc_put_var_double(E->ncid, E->vid_max_depth, &E->c_max_depth[0][0][0])))
-        fail("put_var_ failed for sound_speed. Error code = %d\n",E->retval);
+    if ((E->retval = nc_put_var_float(E->ncid, E->vid_max_depth, &E->c_max_depth[0][0][0])))
+        fail("put_var_ failed for max depth sound_speed. Error code = %d\n",E->retval);
 
 }

@@ -7,10 +7,11 @@ int main(int argc,char **argv)
 {
 	e	*E;
 
-        int	t,i,j,k;   
+    int	t,i,j,k;
 	double	P0, Tpot;
 	double  fillValue;
 	double	max_value;
+    int     count;
  
 	// malloc the work struct
 	E = malloc(sizeof(e));
@@ -34,7 +35,7 @@ int main(int argc,char **argv)
    
      // malloc room for the sound speed array
      E->c = malloc4d_double(E->time+1, E->st_ocean, E->yt_ocean, E->xt_ocean);
-     E->c_max_depth = malloc3d_double(E->time+1, E->yt_ocean, E->xt_ocean);
+     E->c_max_depth = malloc3d_float(E->time+1, E->yt_ocean, E->xt_ocean);
 
      fillValue = NC_FILL_DOUBLE;    
      for(t=0;t<E->time;t++){
@@ -73,14 +74,19 @@ int main(int argc,char **argv)
        for(i=0;i<E->yt_ocean;i++){
            for(j=0;j<E->xt_ocean;j++){
                max_value = 0.0;
-               for(k=29;k>=0;k--){
+               count = 0;
+               for(k=35;k>=0;k--){
                     if(E->c[t][k][i][j] != fillValue){
+                        count++;
                         if(E->c[t][k][i][j] >= max_value){
-			    max_value = E->c[t][k][i][j];
+                            max_value = E->c[t][k][i][j];
                             E->c_max_depth[t][i][j] = E->depth[k];
-			}
+                        }
                     }
                 }
+               if(count == 0){ // all values at this grid point are FillValue
+                   E->c_max_depth[t][i][j] = NC_FILL_FLOAT;
+               }
             }
         }
     } 

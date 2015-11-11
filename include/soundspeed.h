@@ -61,7 +61,7 @@ typedef struct{
     double  ****T;  // temperature
     double  ****S;  // salinity
     double  ****c;  // sound speed
-    double  ***c_max_depth; // depth to max sound speed
+    float  ***c_max_depth; // depth to max sound speed
 
     double *lat;
     double *lon;
@@ -121,6 +121,7 @@ void defvars( e* );
 void defvar_netcdf(e *E, int, char*, nc_type, int, int*, int*);
 void add_txt_attribute_netcdf(e *E, int, int, char*, char* );
 void add_double_attribute_netcdf(e *E, int, int, char*, int, double*);
+void add_float_attribute_netcdf(e *E, int, int, char*, int, float*);
 
 void add_global_metadata( e*, int );
 void write_data( e* );
