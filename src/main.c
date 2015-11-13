@@ -16,6 +16,11 @@ int main(int argc,char **argv)
 	// malloc the work struct
 	E = malloc(sizeof(e));
 	if(E==NULL) fail("Malloc failed\n");
+
+
+	// set the fill values
+	E->fillValue_soundspeed = -9999.0;
+	E->fillValue_maxDepth = -9990.0;
 	
 	// parse command line arguments
 	if(argc < 3){
@@ -43,7 +48,7 @@ int main(int argc,char **argv)
 	    for(i=0;i<E->yt_ocean;i++){
 		for(j=0;j<E->xt_ocean;j++){
                     if(E->T[t][k][i][j] == E->fillValue_temp){
-                        E->c[t][k][i][j] = fillValue;
+                        E->c[t][k][i][j] = E->fillValue_soundspeed;
                     }
                     else{
 			// convert depth to pressure
@@ -85,7 +90,7 @@ int main(int argc,char **argv)
                     }
                 }
                if(count == 0){ // all values at this grid point are FillValue
-                   E->c_max_depth[t][i][j] = NC_FILL_FLOAT;
+                   E->c_max_depth[t][i][j] = E->fillValue_maxDepth;;
                }
             }
         }

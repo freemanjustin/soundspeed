@@ -95,8 +95,6 @@ void defdims_netcdf(e *E){
 
 void defvars(e *E){
 
-    double fillValue = NC_FILL_DOUBLE;
-    float  fillValue_float = NC_FILL_FLOAT;
     // setup dimids
     
     E->dimIds[0] = E->time_dimid;
@@ -108,8 +106,6 @@ void defvars(e *E){
     E->dimIds_max_depth[1] = E->yt_ocean_dimid;
     E->dimIds_max_depth[2] = E->xt_ocean_dimid;
     
-    //float	fillValue = -1e34;
-
     defvar_netcdf(E, E->ncid, "xt_ocean", NC_DOUBLE, 1, &E->dimIds[3], &E->vid_xt_ocean);
     add_txt_attribute_netcdf(E, E->ncid, E->vid_xt_ocean, "long_name", "tcell longitude");
     add_txt_attribute_netcdf(E, E->ncid, E->vid_xt_ocean, "units", "degrees_E");
@@ -150,8 +146,8 @@ void defvars(e *E){
     add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "coordinates", "xt_ocean yt_ocean");
     add_txt_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "units", "m/s");
     
-    add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "_FillValue", 1, &fillValue);
-    add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "missing_value", 1, &fillValue);
+    add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "_FillValue", 1, &E->fillValue_soundspeed);
+    add_double_attribute_netcdf(E, E->ncid, E->vid_sound_speed, "missing_value", 1, &E->fillValue_soundspeed);
 
     defvar_netcdf(E, E->ncid, "max_depth", NC_FLOAT, 3, &E->dimIds_max_depth[0], &E->vid_max_depth);
     add_txt_attribute_netcdf(E, E->ncid, E->vid_max_depth, "long_name", "depth to maximum sound speed");
@@ -160,8 +156,8 @@ void defvars(e *E){
     add_txt_attribute_netcdf(E, E->ncid, E->vid_max_depth, "time_avg_info", "average_T1, average_T2, average_DT");
     add_txt_attribute_netcdf(E, E->ncid, E->vid_max_depth, "coordinates", "xt_ocean yt_ocean");
     add_txt_attribute_netcdf(E, E->ncid, E->vid_max_depth, "units", "meters");
-    add_float_attribute_netcdf(E, E->ncid, E->vid_max_depth, "_FillValue", 1, &fillValue_float);
-    add_float_attribute_netcdf(E, E->ncid, E->vid_max_depth, "missing_value", 1, &fillValue_float);
+    add_float_attribute_netcdf(E, E->ncid, E->vid_max_depth, "_FillValue", 1, &E->fillValue_maxDepth);
+    add_float_attribute_netcdf(E, E->ncid, E->vid_max_depth, "missing_value", 1, &E->fillValue_maxDepth);
 
 	
 }

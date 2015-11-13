@@ -71,7 +71,9 @@ typedef struct{
     float fillValue;
     float fillValue_temp;
     float fillValue_salt;
-    
+    double fillValue_soundspeed;
+    float fillValue_maxDepth;   
+ 
     // netcdf params
     int ncid;
     int varid;
