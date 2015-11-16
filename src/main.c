@@ -20,7 +20,7 @@ int main(int argc,char **argv)
 
 	// set the fill values
 	E->fillValue_soundspeed = -9999.0;
-	E->fillValue_maxDepth = -9990.0;
+	E->fillValue_maxDepth = -9999.0;
 	
 	// parse command line arguments
 	if(argc < 3){
@@ -81,7 +81,7 @@ int main(int argc,char **argv)
                max_value = 0.0;
                count = 0;
                for(k=35;k>=0;k--){
-                    if(E->c[t][k][i][j] != fillValue){
+                    if(E->c[t][k][i][j] != E->fillValue_soundspeed){
                         count++;
                         if(E->c[t][k][i][j] >= max_value){
                             max_value = E->c[t][k][i][j];
